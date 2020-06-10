@@ -1,5 +1,6 @@
 <template>
   <div class="todo-list-app">
+    <h2>{{ title }}</h2>
     <div class="todo-form">
       <create-todo @on-new-todo="addTodo($event)" />
     </div>
@@ -28,28 +29,50 @@
 <script>
 import Todo from "./Todo.vue";
 import CreateTodo from "./CreateTodo.vue";
+import { mapState } from 'vuex';
+
 
 export default {
+  props: {
+    title: String
+  },
   data() {
     return {
       todos: [],
       filteredTodos: []
     };
   },
+  computed: mapState(['todosStore']),
+  created() {
+    this.unsubscribe = this.$store.subscribe((mutation, value) => {
+      if (mutation.type === 'pushTodos') {
+        this.todos = value.todosStore;
+        this.showAllItems();
+      }
+    });
+  },
+  beforeDestroy() {
+    this.unsubscribe();
+  },
   methods: {
+    pushList() {
+      this.$store.dispatch('pushTodos', this.todos);
+    },
     addTodo(newTodo) {
       this.todos.push({ description: newTodo, completed: false });
-      this.showAllItems();
+      this.pushList();
     },
     toggleTodo(todo) {
       todo.completed = !todo.completed;
+      this.pushList();
     },
     deleteTodo(deletedTodo) {
       this.todos = this.todos.filter(todo => todo !== deletedTodo);
-      this.showAllItems();
+      this.pushList();
     },
     editTodo(todo, newTodoDescription) {
       todo.description = newTodoDescription;
+      this.pushList();
     },
     showAllItems() {
       this.filteredTodos = [...this.todos];

@@ -9,7 +9,7 @@
         <form @submit.prevent="submitTodo()">
           <input
             type="text"
-            v-model="description"
+            v-model="input"
             @blur="submitTodo()"
             ref="newTodo"
           />
@@ -26,9 +26,14 @@ export default {
     description: String,
     completed: Boolean
   },
+  data() {
+    return {
+      input: this.description
+    };
+  },
   methods: {
     submitTodo() {
-      this.$emit("on-edit", this.description);
+      this.$emit("on-edit", this.input);
     }
   }
 };

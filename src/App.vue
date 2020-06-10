@@ -1,6 +1,7 @@
 <template>
 <div id="root">
-  <todo-list />
+  <todo-list :title="'Todo list 1'"/>
+  <todo-list :title="'Todo list 2'"/>
 </div>
 </template>
 
